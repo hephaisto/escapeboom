@@ -1,0 +1,126 @@
+\documentclass[a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[a4paper]{geometry}
+\usepackage{longtable}
+\usepackage{babel}
+
+\newcommand{\secnorm}{358-842}
+\newcommand{\cockpit}{Control panel 24D}
+\newcommand{\fatalrisk}{\texttt{FATAL}}
+\newcommand{\fakepage}{REMOVE THIS PAGE\clearpage}
+
+\newcommand{\target}[5]{\textsc{#1} & #2 & #3 & #4 & #5 \\\hline}
+
+\begin{document}
+
+\tableofcontents
+
+\part{Strategic targets}
+
+\begin{longtable}{p{2cm}p{3cm}|p{1cm}p{1cm}|p{6cm}}
+Code & Name & lon. & lat. & Notes \\\hline	\endfirsthead
+%(targets)s
+\end{longtable}
+
+\clearpage
+\part{\cockpit description}
+
+\clearpage
+\section{Clock}
+REMOVE THIS PAGE
+
+\clearpage
+\section{Main communication control}
+REMOVE THIS PAGE
+
+
+\clearpage
+\section{Entry}
+
+BACKSIDE: 937342
+
+\section{Data entry inhibitor}
+
+According to \secnorm, all security relevant functions may only be available to personell with the corresponding clearing.
+For \cockpit, the following classification is defined:
+
+\begin{longtable}{p{3cm}p{1cm}p{8cm}}
+Function & LVL & Rationale \\\hline\endfirsthead
+Comm & 1 & see \secnorm p. 17 \\
+Clock & 0 & - \\
+Data entry & 0 & The data entry module is necessary to enter unlock codes and may therefore not be locked. \\
+Self destruct & 3 & Activating the ship self destruct mechanism poses poses a risk of class \fatalrisk. \\
+Launch panel & 3 & Launching delivery vehicles poses a risk of class \fatalrisk. \\
+ALDFS encryption & 1 & ALDFS must be available to communication officers (see \secnorm p. 19)
+\end{longtable}
+
+\subsection{Risk level analysis - LVL 0}
+
+\subsubsection{Active functions}
+\begin{itemize}
+	\item	Clock
+	\item	Data entry
+\end{itemize}
+
+\subsubsection{Additional functions available by combination of singular functions}
+none
+
+\subsubsection{Conclusions}
+No additional risk
+
+\subsection{Risk level analysis - LVL 1}
+
+\subsubsection{Active functions}
+\begin{itemize}
+	\item	Clock
+	\item	Data entry
+	\item	Comm
+	\item	ALDFS encryption
+\end{itemize}
+
+\subsubsection{Additional functions available by combination of singular functions}
+\begin{longtable}{p{4cm}p{1cm}p{8cm}}
+Function & LVL &  Rationale \\\hline\endfirsthead
+Clock synchronisation & 0 & No security implications \\
+Encrypted communiction & 1 & see \secnorm p. 19 \\
+\end{longtable}
+
+\subsubsection{Conclusions}
+All additional combined functions have LVL 1 or lower.
+
+
+\subsubsection{Risk level analysis - LVL 2}
+No risk analysis was performed because there are no functions classified LVL 2 on \cockpit.
+
+
+\subsubsection{Risk level analysis - LVL 3}
+No risk analysis was performed because LVL 3 is the highest security clearance level on \cockpit.
+
+
+\clearpage
+\section{Selfdestruct procedure}
+
+\begin{enumerate}
+	\item	Start selfdestruct countdown. The selfdestruct timer is fixed at 1 hour to provide sufficient time for evacuation.
+	\item	Lock LVL 3 access.
+	\item	Announce \texttt{Abandon ship} via the onboard communication systems.
+	\item	Notify main command about the reasons for self destruct.
+	\item	Destroy codebooks.
+	\item	During peacetime: Announce \texttt{Mayday} (3x) and \texttt{Keep clearance} on the international emergency frequency.
+	\item	Lock LVL 1 access.
+\end{enumerate}
+
+\clearpage
+\section{Launch panel}
+
+\fakepage
+\fakepage
+\fakepage
+
+\section{ALDFS encryption module}
+
+%% TODO: explain encryption
+
+\end{document}
+
