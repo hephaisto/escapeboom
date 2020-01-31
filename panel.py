@@ -2,6 +2,27 @@ import math
 
 import svgwrite as svg
 
+style = """
+.normaltext
+{
+	font-size: 8px;
+	dominant-baseline: middle;
+	font: monospace;
+}
+.sevensegment
+{
+	font-size: 12px;
+	dominant-baseline: middle;
+	text-anchor: middle;
+}
+.rightalign
+{
+	font-size: 8px;
+	dominant-baseline: middle;
+	font: monospace;
+	text-anchor: end;
+}
+"""
 
 class Writer(object):
 	led_radius = 2.5
@@ -18,7 +39,7 @@ class Writer(object):
 	def __init__(self, mode, target):
 		self.mode = mode
 		self.s = svg.Drawing(target, width=600, height=400)
-		self.s.defs.add(self.s.style(".normaltext { font-size: 8px; dominant-baseline: middle; font: monospace; } .sevensegment { font-size: 12px; dominant-baseline: middle; text-anchor: middle; } .rightalign { font-size: 8px; dominant-baseline: middle; font: monospace; text-anchor: end; }"))
+		self.s.defs.add(self.s.style(style))
 		self.base_x = 0.0
 		self.base_y = 0.0
 
