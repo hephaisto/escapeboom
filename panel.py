@@ -24,6 +24,8 @@ style = """
 }
 """
 
+padding = 15.0
+
 class Writer(object):
 	led_radius = 2.5
 	switch_radius = 3.5
@@ -126,6 +128,11 @@ class Writer(object):
 	
 	def jack(self, x, y):
 		self.s.add(self.s.circle(center=(x, y), r=self.jack_radius, stroke=self.cut_stroke, fill="none"))
+	
+	def with_label(self, func, x, y, label, *args, **kwargs):
+		func(x, y, *args, **kwargs)
+		self.polyline([(x, y), (x+padding, y)])
+		self.text(x+padding, y, label)
 
 
 def launch_panel(writer):
@@ -154,28 +161,20 @@ def launch_panel(writer):
 		writer.led(x, y_programmed, "orange")
 		writer.push_button(x, y_program, "green")
 
+
 def antenna_panel(writer):
-	padding = 20.0
 	left_center = 15.0
-	left_text = left_center + padding
 
 	right_center = 130.0
-	right_text = right_center + padding
 
 	top = 15.0
 	bottom = 30.0
 
-	writer.led(left_center, top, "green")
-	writer.text(left_text, top, "TURNING")
+	writer.with_label(writer.led, left_center, top, "TURNING", "green")
+	writer.with_label(writer.led, left_center, bottom, "MALFUNCTION", "red")
 
-	writer.led(left_center, bottom, "red")
-	writer.text(left_text, bottom, "MALFUNCTION")
-
-	writer.push_button(right_center, top, "green")
-	writer.text(right_text, top, "LEFT")
-	
-	writer.push_button(right_center, bottom, "green")
-	writer.text(right_text, bottom, "RIGHT")
+	writer.with_label(writer.push_button, right_center, top, "LEFT", "green")
+	writer.with_label(writer.push_button, right_center, bottom, "RIGHT", "green")
 
 def sender_panel(writer):
 	writer.seven_segment(60.0, 30.0, "green")
@@ -197,8 +196,8 @@ def sender_panel(writer):
 	writer.turn_knob_labels(source_x, source_y, labels)
 	writer.turn_knob(source_x, source_y)
 
-	writer.push_button(120.0, 120.0, "green")
-	writer.jack(60.0, 120.0)
+	writer.with_label(writer.push_button, 120.0, 120.0, "MORSE", "green")
+	writer.with_label(writer.jack, 60.0, 120.0, "AUX IN")
 
 """
 * I2C (frequency)
