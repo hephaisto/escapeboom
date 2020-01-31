@@ -199,15 +199,6 @@ def sender_panel(writer):
 	writer.with_label(writer.push_button, 120.0, 120.0, "MORSE", "green")
 	writer.with_label(writer.jack, 60.0, 120.0, "AUX IN")
 
-"""
-* I2C (frequency)
-* 1x2 quadrature encoder (frequency dial)
-* 1 driver (beeper)
-* 3 turning knob (data source) [off, morse, crypt, plain, microphone, aux]
-* 1 button (morse) (can be functionless)
-* 1 audio jack (aux in) (can be functionless)
-"""
-
 
 for writer in (
 		Writer("cut", "output/panel_cut.svg"),
