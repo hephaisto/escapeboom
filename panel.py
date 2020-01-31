@@ -1,3 +1,5 @@
+import math
+
 import svgwrite as svg
 
 
@@ -6,6 +8,8 @@ class Writer(object):
 	switch_radius = 3.5
 	switch_height = 5.0
 	push_button_radius = 5.0
+	turn_knob_radius = 3.0
+	jack_radius = 2.5
 
 	cut_stroke = "black"
 	mark_stroke = "blue"
@@ -14,7 +18,7 @@ class Writer(object):
 	def __init__(self, mode, target):
 		self.mode = mode
 		self.s = svg.Drawing(target, width=600, height=400)
-		self.s.defs.add(self.s.style(".normaltext { font-size: 8px; dominant-baseline: middle; font: monospace; }"))
+		self.s.defs.add(self.s.style(".normaltext { font-size: 8px; dominant-baseline: middle; font: monospace; } .sevensegment { font-size: 12px; dominant-baseline: middle; text-anchor: middle; } .rightalign { font-size: 8px; dominant-baseline: middle; font: monospace; text-anchor: end; }"))
 		self.base_x = 0.0
 		self.base_y = 0.0
 
@@ -50,12 +54,17 @@ class Writer(object):
 
 		self.s.add(self.s.circle(center=(x+self.base_x, y+self.base_y), r=self.push_button_radius, stroke=self.cut_stroke, fill=fill))
 	
-	def text(self, x, y, text):
+	def text(self, x, y, text, align=""):
 		color = {
 			"doc": "black",
 			"cut": self.engrave_stroke,
 		}[self.mode]
-		self.s.add(self.s.text(text, insert=(x, y), class_="normaltext", stroke=color))
+		class_ = {
+			"": "normaltext",
+			"left": "normaltext",
+			"right": "rightalign",
+		}[align]
+		self.s.add(self.s.text(text, insert=(x, y), class_=class_, stroke=color))
 	
 	def polyline(self, points):
 		color = {
@@ -66,6 +75,36 @@ class Writer(object):
 
 	def save(self):
 		self.s.save()
+	
+	def seven_segment(self, x, y, color):
+		stroke = {
+			"doc": "black",
+			"cut": self.cut_stroke,
+		}[self.mode]
+
+		width = 60.0 # TODO
+		height = 20.0 # TODO
+
+		self.s.add(self.s.rect(insert=(x-width/2, y-height/2), size=(width, height), stroke=stroke, fill="none"))
+		if self.mode == "doc":
+			self.s.add(self.s.text("12:34", insert=(x, y), class_="sevensegment", stroke=color))
+	
+	def turn_knob(self, x, y):
+		self.s.add(self.s.circle(center=(x, y), r=self.turn_knob_radius, stroke=self.cut_stroke))
+
+		if self.mode == "doc":
+			self.s.add(self.s.circle(center=(x, y), r=self.turn_knob_radius+5.0, fill="gray", stroke="black"))
+	
+	def turn_knob_labels(self, x, y, labels):
+		radius = 20.0
+		for angle, label in labels:
+			end_x = x + math.cos(angle)*radius
+			end_y = y+math.sin(angle)*radius
+			self.polyline([(x, y), (end_x, end_y)])
+			self.text(end_x, end_y, label, align="right" if end_x<x else "left")
+	
+	def jack(self, x, y):
+		self.s.add(self.s.circle(center=(x, y), r=self.jack_radius, stroke=self.cut_stroke, fill="none"))
 
 
 def launch_panel(writer):
@@ -93,13 +132,70 @@ def launch_panel(writer):
 		writer.led(x, y_power, "green")
 		writer.led(x, y_programmed, "orange")
 		writer.push_button(x, y_program, "green")
+
+def antenna_panel(writer):
+	padding = 20.0
+	left_center = 15.0
+	left_text = left_center + padding
+
+	right_center = 130.0
+	right_text = right_center + padding
+
+	top = 15.0
+	bottom = 30.0
+
+	writer.led(left_center, top, "green")
+	writer.text(left_text, top, "TURNING")
+
+	writer.led(left_center, bottom, "red")
+	writer.text(left_text, bottom, "MALFUNCTION")
+
+	writer.push_button(right_center, top, "green")
+	writer.text(right_text, top, "LEFT")
 	
+	writer.push_button(right_center, bottom, "green")
+	writer.text(right_text, bottom, "RIGHT")
+
+def sender_panel(writer):
+	writer.seven_segment(60.0, 30.0, "green")
+	writer.turn_knob(120.0, 30.0)
+	
+	source_x = 80.0
+	source_y = 80.0
+
+	labels = [(i*0.6, label) for i, label in enumerate((
+		"off",
+		"morse",
+		"crypt",
+		"aux",
+		"plain",
+		"microphone",
+		"board com1",
+		"board com2",
+		))]
+	writer.turn_knob_labels(source_x, source_y, labels)
+	writer.turn_knob(source_x, source_y)
+
+	writer.push_button(120.0, 120.0, "green")
+	writer.jack(60.0, 120.0)
+
+"""
+* I2C (frequency)
+* 1x2 quadrature encoder (frequency dial)
+* 1 driver (beeper)
+* 3 turning knob (data source) [off, morse, crypt, plain, microphone, aux]
+* 1 button (morse) (can be functionless)
+* 1 audio jack (aux in) (can be functionless)
+"""
+
 
 for writer in (
 		Writer("cut", "output/panel_cut.svg"),
 		Writer("doc", "output/panel_doc.svg"),
 		):
-	launch_panel(writer)
+	#launch_panel(writer)
+	#antenna_panel(writer)
+	sender_panel(writer)
 	writer.save()
 
 
