@@ -200,13 +200,13 @@ def sender_panel(writer):
 	writer.with_label(writer.jack, 60.0, 120.0, "AUX IN")
 
 
-for writer in (
-		Writer("cut", "output/panel_cut.svg"),
-		Writer("doc", "output/panel_doc.svg"),
+for out_type in ("cut", "doc"):
+	for out_name, out_function in (
+		("launch", launch_panel),
+		("antenna", antenna_panel),
+		("sender", sender_panel),
 		):
-	#launch_panel(writer)
-	#antenna_panel(writer)
-	sender_panel(writer)
-	writer.save()
-
+		writer = Writer(out_type, "output/{}_{}.svg".format(out_name, out_type))
+		out_function(writer)
+		writer.save()
 
