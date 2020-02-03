@@ -3,7 +3,7 @@
 namespace communication
 {
 
-enum Source
+enum class Source
 {
 	off,
 	morse,

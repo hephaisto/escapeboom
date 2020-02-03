@@ -2,9 +2,10 @@
 
 #include "communication/communication.hpp"
 
+FullInput input;
 FullState state;
 
-communication::Communication comm{state.commState};
+communication::Communication comm{state.commState, input.comm};
 
 void setup()
 {
