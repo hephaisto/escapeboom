@@ -3,9 +3,10 @@
 #include "communication/communication.hpp"
 
 FullInput input;
+FullOutput output;
 FullState state;
 
-communication::Communication comm{state.commState, input.comm};
+communication::Communication comm{state.commState, input.comm, output.comm};
 
 void setup()
 {

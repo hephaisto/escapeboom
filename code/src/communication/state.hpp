@@ -20,6 +20,8 @@ struct State
 	bool canBePoweredOn{false};
 	Source selectedSource;
 	uint16_t selectedFrequency{800};
+	uint8_t antennaAngle{35};
+	bool turning;
 };
 
 struct HardwareInput
@@ -39,13 +41,15 @@ struct HardwareInput
 	bool frequencyA;
 	bool frequencyB;
 
-	bool antennaLeft;
-	bool antennaRight;
+	bool antennaCw;
+	bool antennaCcw;
 };
 
 struct HardwareOutput
 {
 	// display TODO
+	bool motorMalfunction;
+	bool motorActive;
 };
 
 }
