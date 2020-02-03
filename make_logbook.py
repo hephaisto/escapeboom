@@ -6,6 +6,7 @@ with open("templates/logbook.tex", "r") as f:
 with open("output/logbook.tex", "w") as f:
 	f.write(template % dict(
 		vehicle1="TODO",
+		vehicle1_range=85,
 		vehicle2="TODO",
 		vehicle3="TODO",
 		vehicle4="TODO",
