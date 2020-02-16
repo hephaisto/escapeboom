@@ -33,6 +33,8 @@ class Writer(object):
 	push_button_radius = 5.0
 	turn_knob_radius = 3.0
 	jack_radius = 2.5
+	ps2_radius = 3.0
+	textdisplay_size = (120.0, 50.0)
 
 	cut_stroke = "black"
 	mark_stroke = "blue"
@@ -76,6 +78,13 @@ class Writer(object):
 			fill = "none"
 
 		self.s.add(self.s.circle(center=(x+self.base_x, y+self.base_y), r=self.push_button_radius, stroke=self.cut_stroke, fill=fill))
+	
+	def ps2(self, x, y):
+		self.s.add(self.s.circle(center=(x+self.base_x, y+self.base_y), r=self.ps2_radius, stroke=self.cut_stroke, fill="none"))
+	
+	def textdisplay(self, x, y):
+		size = self.textdisplay_size
+		self.s.add(self.s.rect(insert=(x-size[0]/2, y-size[1]/2), size=size, stroke=self.cut_stroke, fill="none"))
 	
 	def text(self, x, y, text, align=""):
 		color = {
@@ -160,6 +169,10 @@ def launch_panel(writer):
 		writer.led(x, y_power, "green")
 		writer.led(x, y_programmed, "orange")
 		writer.push_button(x, y_program, "green")
+	
+	x_launch = 170.0
+	writer.with_label(writer.push_button, x_launch, y_switch, "LAUNCH 1", "red")
+	writer.with_label(writer.push_button, x_launch, y_program, "LAUNCH 2", "red")
 
 
 def antenna_panel(writer):
@@ -199,12 +212,44 @@ def sender_panel(writer):
 	writer.with_label(writer.push_button, 120.0, 120.0, "MORSE", "green")
 	writer.with_label(writer.jack, 60.0, 120.0, "AUX IN")
 
+def clock_panel(writer):
+	writer.seven_segment(60.0, 30.0, "red")
+	writer.with_label(writer.led, 40.0, 50.0, "SYNC", "green")
+
+def lock_panel(writer):
+	for i in range(3):
+		y = (3-i) * 20.0 + 10
+		lvl = i+1
+		writer.with_label(writer.led, 40.0, y, "LVL{} LOCK".format(lvl), "red")
+		writer.push_button(20.0, y, "red")
+	writer.with_label(writer.push_button, 40.0, 90.0, "UNLOCK", "green")
+	writer.with_label(writer.led, 40.0, 110.0, "INPUT LOCK", "red")
+
+def selfdestruct_panel(writer):
+	writer.seven_segment(60.0, 30.0, "red")
+	writer.with_label(writer.push_button, 40.0, 60.0, "START", "red")
+	writer.with_label(writer.push_button, 40.0, 80.0, "ABORT", "red")
+
+def encryption_panel(writer):
+	writer.with_label(writer.switch2, 60, 30, "POWER")
+	writer.led(30, 30, "green")
+	writer.with_label(writer.switch2, 60, 50, "MODE")
+	writer.with_label(writer.push_button, 60, 70, "RESET", "red")
+
+def entry_panel(writer):
+	writer.textdisplay(90, 30)
+	writer.ps2(90, 70)
 
 for out_type in ("cut", "doc"):
 	for out_name, out_function in (
 		("launch", launch_panel),
 		("antenna", antenna_panel),
 		("sender", sender_panel),
+		("clock", clock_panel),
+		("lock", lock_panel),
+		("selfdestruct", selfdestruct_panel),
+		("encryption", encryption_panel),
+		("entry", entry_panel),
 		):
 		writer = Writer(out_type, "output/{}_{}.svg".format(out_name, out_type))
 		out_function(writer)
