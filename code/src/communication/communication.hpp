@@ -8,10 +8,9 @@ namespace communication
 class Communication
 {
 public:
-	Communication(State &state, HardwareInput &input, HardwareOutput &output)
+	Communication(State &state, HardwareInput &hardware)
 	:m_state{state}
-	,m_input{input}
-	,m_output{output}
+	,m_hardware{hardware}
 	{}
 
 	void setup()
@@ -24,8 +23,7 @@ public:
 	}
 private:
 	State &m_state;
-	HardwareInput &m_input;
-	HardwareOutput &m_output;
+	HardwareInput &m_hardware;
 
 	enum class RotationDirection
 	{
@@ -39,13 +37,13 @@ private:
 		uint8_t numActive = 0;
 		Source newSource{Source::off};
 
-		setSource(newSource, Source::off, m_input.off, numActive);
-		setSource(newSource, Source::morse, m_input.crypt, numActive);
-		setSource(newSource, Source::aux, m_input.aux, numActive);
-		setSource(newSource, Source::plain, m_input.plain, numActive);
-		setSource(newSource, Source::microphone, m_input.microphone, numActive);
-		setSource(newSource, Source::boardCom1, m_input.boardCom1, numActive);
-		setSource(newSource, Source::boardCom2, m_input.boardCom2, numActive);
+		setSource(newSource, Source::off, m_hardware.off, numActive);
+		setSource(newSource, Source::morse, m_hardware.crypt, numActive);
+		setSource(newSource, Source::aux, m_hardware.aux, numActive);
+		setSource(newSource, Source::plain, m_hardware.plain, numActive);
+		setSource(newSource, Source::microphone, m_hardware.microphone, numActive);
+		setSource(newSource, Source::boardCom1, m_hardware.boardCom1, numActive);
+		setSource(newSource, Source::boardCom2, m_hardware.boardCom2, numActive);
 
 		if(numActive == 1)
 		{
@@ -65,42 +63,15 @@ private:
 
 	void turnAntenna()
 	{
-		if(m_state.turning)
+		if(m_isRotating)
 		{
-			if(m_millisecondsWhenRotationEnds < millis()) // rotation ended
+			if(m_millisecondsWhenRotationEnds < millis())
 			{
 				if(m_currentRotationDirection == RotationDirection::cw)
 					turnCw();
 				else
 					turnCcw();
-				m_state.turning = false;
 			}
-		}
-		else
-		{
-			checkRotationInputs();
-		}
-		m_output.motorActive = m_state.turning;
-	}
-
-	void checkRotationInputs()
-	{
-		if( (m_input.antennaCw) && (m_input.antennaCcw) )
-		{
-			m_state.turning = false;
-			m_output.motorMalfunction = true;
-		}
-		else if( (m_input.antennaCw) && (!m_input.antennaCcw))
-		{
-			m_state.turning = true;
-			m_currentRotationDirection = RotationDirection::cw;
-			m_millisecondsWhenRotationEnds = millis() + config::millisecondsForOneAntennaRotation;
-		}
-		else if( (!m_input.antennaCw) && (m_input.antennaCcw))
-		{
-			m_state.turning = true;
-			m_currentRotationDirection = RotationDirection::ccw;
-			m_millisecondsWhenRotationEnds = millis() + config::millisecondsForOneAntennaRotation;
 		}
 	}
 

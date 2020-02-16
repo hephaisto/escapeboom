@@ -21,7 +21,6 @@ struct State
 	Source selectedSource;
 	uint16_t selectedFrequency{800};
 	uint8_t antennaAngle{35};
-	bool turning;
 };
 
 struct HardwareInput
@@ -41,8 +40,8 @@ struct HardwareInput
 	bool frequencyA;
 	bool frequencyB;
 
-	bool antennaCw;
-	bool antennaCcw;
+	bool antennaLeft;
+	bool antennaRight;
 };
 
 struct HardwareOutput
